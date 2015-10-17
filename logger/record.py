@@ -32,3 +32,9 @@ class Record(UserDict):
             o['@version'] = 1
         return Record(o)
 
+    def __str__(self):
+        pieces = []
+        for k, v in self.data.items():
+            pieces.append('{!r}: {!r}'.format(k, v))
+        return '{' + ', '.join(pieces) + '}'
+

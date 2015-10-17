@@ -1,8 +1,10 @@
 #! /usr/bin/env python3
 
 import asyncio
-import boto3
+import aiobotocore
+from datetime import datetime
 from io import BytesIO
+import umsgpack
 
 _records = []
 _max_qlen = 0
@@ -10,6 +12,7 @@ _ev_flush = None
 
 def init(loop, opts):
     global _max_qlen, _ev_flush
+    assert opts['codec'] in ('msgpack', 'text')
     ev = asyncio.Event(loop=loop)
     _ev_flush = ev
     interval = opts.get('flush_interval', 30)
@@ -27,24 +30,33 @@ async def s3_flush_timer(loop, interval, ev):
 
 async def s3_flusher(loop, opts, ev):
     global _records
-    # TODO: replace this with asyncio-enabled version in the future
-    #       (e.g., https://github.com/jettify/aiobotocore)
     # TODO: support for different codecs
     buffer = BytesIO()
+    part_count = 1
     while True:
         await ev.wait()
         ev.clear()
-        #print('flushed {} records'.format(len(_records)))
-        #for r in _records:
-        #    print(r)
-        packer = umsgpack.Packer()
-        for rec in _records:
-            buffer.write(packer.pack(rec))
-        _records.clear()
-        # TODO: apply credentials
-        s3 = boto3.resource('s3')
-        bucket = s3.Bucket(opts['bucket'])
-        resp = bucket.put_object(Key='<mangled_logname>', Body=buffer.getvalue())
+        if opts['codec'] == 'msgpack':
+            packer = umsgpack.Packer()
+            for rec in _records:
+                # TODO: let umsgpack accept OrderedDict as-is.
+                buffer.write(packer.pack(dict(rec)))
+        elif opts['codec'] == 'text':
+            for rec in _records:
+                print(str(rec).encode('utf8'), file=buffer)
+        _records.clear()  # must be cleared before any await
+        session = aiobotocore.get_session(loop=loop)
+        client = session.create_client('s3', region_name=opts['region'],
+                                       aws_secret_access_key=opts['secret_key'],
+                                       aws_access_key_id=opts['access_key'])
+        ts = datetime.now().strftime('%Y-%m-%dT%H.%M.%S')
+        key = '{}.{}.part{}.msgpack'.format(opts['key_prefix'], ts, part_count)
+        resp = await client.put_object(Bucket=opts['bucket'],
+                                       Key=key,
+                                       Body=buffer.getvalue(),
+                                       ACL='private')
+        buffer.truncate(0)
+        part_count += 1
 
 def enqueue(records):
     global _records, _max_qlen

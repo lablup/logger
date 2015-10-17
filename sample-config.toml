@@ -13,8 +13,10 @@
     [outputs.s3]
     access_key = ""
     secret_key = ""
+    region = "ap-northeast-1"
     bucket = "mylogs"
     codec = "msgpack"
+    key_prefix = "sample"
     flush_interval = 30  # in seconds
     max_queue_length = 10000
 
