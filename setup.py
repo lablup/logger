@@ -26,7 +26,7 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
 
-    install_requires=['simplejson', 'toml', 'umsgpack'],
+    install_requires=['simplejson', 'toml', 'umsgpack', 'pyzmq', 'aiozmq', 'boto3'],
     extras_require={
         'dev': [],
         'test': [],

@@ -15,4 +15,6 @@
     secret_key = ""
     bucket = "mylogs"
     codec = "msgpack"
+    flush_interval = 30  # in seconds
+    max_queue_length = 10000
 
