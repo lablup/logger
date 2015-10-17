@@ -1,0 +1,18 @@
+[daemon]
+
+[inputs]
+
+    [inputs.zmq]
+    topology = "pubsub"
+    endpoint = "tcp://*:2120"
+
+[filters]
+
+[outputs]
+
+    [outputs.s3]
+    access_key = ""
+    secret_key = ""
+    bucket = "mylogs"
+    codec = "msgpack"
+
