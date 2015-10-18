@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN mkdir /logger
 RUN apt-get update && apt-get build-dep -y python3
-RUN apt-get install -y git-core wget libbz2-dev libssl-dev libreadline-dev libsqlite3-dev
+RUN apt-get install -y git-core wget libbz2-dev libssl-dev libreadline-dev libsqlite3-dev libzmq-dev
 RUN git clone https://github.com/lablup/logger /logger
 RUN git clone https://github.com/yyuu/pyenv /logger/.pyenv
 RUN chmod +x /logger/*.sh
