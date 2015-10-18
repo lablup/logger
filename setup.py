@@ -26,7 +26,8 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
 
-    install_requires=['simplejson', 'toml', 'umsgpack', 'pyzmq', 'aiozmq', 'aiohttp', 'aiobotocore'],
+    # TODO: add aiobotocore if it becomes available in pip
+    install_requires=['simplejson', 'toml', 'umsgpack', 'pyzmq', 'aiozmq', 'aiohttp'],
     extras_require={
         'dev': [],
         'test': [],
