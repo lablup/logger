@@ -20,6 +20,7 @@ class ServerLoop:
 
         for name, opts in self.inputs.items():
             try:
+                print('Loading input module {}...'.format(name))
                 mod = importlib.import_module('..inputs.{}'.format(name), __name__)
                 mod.init(self.loop, opts, self.records_available)
                 self.input_mods.append(mod)
@@ -29,6 +30,7 @@ class ServerLoop:
 
         for name, opts in self.filters.items():
             try:
+                print('Loading filter module {}...'.format(name))
                 mod = importlib.import_module('..filters.{}'.format(name), __name__)
                 mod.init(self.loop, opts)
                 self.filter_mods.append(mod)
@@ -38,6 +40,7 @@ class ServerLoop:
 
         for name, opts in self.outputs.items():
             try:
+                print('Loading output module {}...'.format(name))
                 mod = importlib.import_module('..outputs.{}'.format(name), __name__)
                 mod.init(self.loop, opts)
                 self.output_mods.append(mod)
