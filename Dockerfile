@@ -14,7 +14,7 @@ RUN /logger/install-python.sh
 RUN /logger/install.sh
 
 # The config filename is "logger.conf" in the mounted volume.
-VOLUME ['/logger/conf']
+VOLUME ["/logger/conf"]
 
 # Default ZMQ subscriber port.
 EXPOSE 2120
