@@ -36,6 +36,7 @@ async def s3_flusher(loop, opts, ev):
     while True:
         await ev.wait()
         ev.clear()
+        print('s3: flushing {} entries...'.format(len(_records)))
         if opts['codec'] == 'msgpack':
             packer = umsgpack.Packer()
             for rec in _records:

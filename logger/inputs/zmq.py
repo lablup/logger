@@ -28,6 +28,7 @@ async def zmq_fetcher(loop, server, rec_avail_ev):
             break
         rec = Record.parse(recv_data[0])
         _records.append(rec)
+        print('zmq: received log')
 
         # Notify the logger loop to proceed.
         rec_avail_ev.set()
