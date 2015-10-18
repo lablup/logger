@@ -9,7 +9,8 @@ RUN apt-get update && apt-get build-dep -y python3
 RUN apt-get install -y git-core wget libbz2-dev libssl-dev libreadline-dev libsqlite3-dev
 RUN git clone https://github.com/lablup/logger /logger
 RUN git clone https://github.com/yyuu/pyenv /logger/.pyenv
-RUN chmod +x /logger/install.sh /logger/run.sh
+RUN chmod +x /logger/*.sh
+RUN /logger/install-python.sh
 RUN /logger/install.sh
 
 # The config filename is "logger.conf" in the mounted volume.
