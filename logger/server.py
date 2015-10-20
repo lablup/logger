@@ -19,24 +19,25 @@ class ServerLoop:
         self.output_mods = []
 
         for name, opts in self.inputs.items():
-            print('Loading input module {}...'.format(name))
+            print('loading input module {}...'.format(name))
             mod = importlib.import_module('..inputs.{}'.format(name), __name__)
             mod.init(self.loop, opts, self.records_available)
             self.input_mods.append(mod)
 
         for name, opts in self.filters.items():
-            print('Loading filter module {}...'.format(name))
+            print('loading filter module {}...'.format(name))
             mod = importlib.import_module('..filters.{}'.format(name), __name__)
             mod.init(self.loop, opts)
             self.filter_mods.append(mod)
 
         for name, opts in self.outputs.items():
-            print('Loading output module {}...'.format(name))
+            print('loading output module {}...'.format(name))
             mod = importlib.import_module('..outputs.{}'.format(name), __name__)
             mod.init(self.loop, opts)
             self.output_mods.append(mod)
 
     async def serve(self):
+        print('started.')
         while True:
             # Wait until if any input module notifies me.
             # Via this notification scheme, we can avoid busy-waiting.

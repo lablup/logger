@@ -30,7 +30,6 @@ async def s3_flush_timer(loop, interval, ev):
 
 async def s3_flusher(loop, opts, ev):
     global _records
-    # TODO: support for different codecs
     buffer = BytesIO()
     part_count = 1
     while True:
@@ -40,8 +39,7 @@ async def s3_flusher(loop, opts, ev):
         if opts['codec'] == 'msgpack':
             packer = umsgpack.Packer()
             for rec in _records:
-                # TODO: let umsgpack accept OrderedDict as-is.
-                buffer.write(packer.pack(dict(rec)))
+                buffer.write(packer.pack(rec.data))
         elif opts['codec'] == 'text':
             for rec in _records:
                 print(str(rec).encode('utf8'), file=buffer)

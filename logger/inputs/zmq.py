@@ -16,7 +16,8 @@ def init(loop, opts, rec_avail_ev):
     topo = Topologies[opts['topology']].value
     server = loop.run_until_complete(
             aiozmq.create_zmq_stream(topo, bind=opts['endpoint'], loop=loop))
-    server.transport.setsockopt(zmq.SUBSCRIBE, b'')
+    if topo == zmq.SUB:
+        server.transport.setsockopt(zmq.SUBSCRIBE, b'')
     asyncio.ensure_future(zmq_fetcher(loop, server, rec_avail_ev), loop=loop)
 
 async def zmq_fetcher(loop, server, rec_avail_ev):
@@ -28,7 +29,6 @@ async def zmq_fetcher(loop, server, rec_avail_ev):
             break
         rec = Record.parse(recv_data[0])
         _records.append(rec)
-        print('zmq: received log')
 
         # Notify the logger loop to proceed.
         rec_avail_ev.set()
