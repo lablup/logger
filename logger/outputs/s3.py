@@ -48,8 +48,13 @@ async def s3_flusher(loop, opts, ev):
         client = session.create_client('s3', region_name=opts['region'],
                                        aws_secret_access_key=opts['secret_key'],
                                        aws_access_key_id=opts['access_key'])
-        ts = datetime.now().strftime('%Y-%m-%dT%H.%M.%S')
-        key = '{}.{}.part{}.msgpack'.format(opts['key_prefix'], ts, part_count)
+        now = datetime.now()
+        ts_month = now.strftime('%Y-%m')
+        ts_monthday = now.strftime('%Y-%m-%d')
+        ts_time = now.strftime('%Y-%m-%dT%H.%M.%S')
+        key = '{}/{}/{}/{}.part{}.msgpack'.format(opts['key_prefix'],
+                                                  ts_month, ts_monthday, ts_time,
+                                                  part_count)
         resp = await client.put_object(Bucket=opts['bucket'],
                                        Key=key,
                                        Body=buffer.getvalue(),
