@@ -3,7 +3,7 @@
 import asyncio
 import aiobotocore
 from datetime import datetime
-from io import BytesIO
+import io
 import umsgpack
 
 _records = []
@@ -30,7 +30,7 @@ async def s3_flush_timer(loop, interval, ev):
 
 async def s3_flusher(loop, opts, ev):
     global _records
-    buffer = BytesIO()
+    buffer = io.BytesIO()
     part_count = 1
     while True:
         await ev.wait()
@@ -54,6 +54,7 @@ async def s3_flusher(loop, opts, ev):
                                        Key=key,
                                        Body=buffer.getvalue(),
                                        ACL='private')
+        buffer.seek(0, io.SEEK_SET)
         buffer.truncate(0)
         part_count += 1
 
